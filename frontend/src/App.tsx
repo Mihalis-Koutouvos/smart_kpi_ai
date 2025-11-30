@@ -3,13 +3,15 @@ import { pingBackend } from './api/ping';
 import { getKPIS } from './api/kpis';
 
 interface KPI {
-  name: string;
-  value: number;
+  revenue: string;
+  users: number;
+  conversion_rate: string;
+  uptime: string;
 }
 
 function App() {
   const [message, setMessage] = useState("No response");
-  const [kpis, setKPIs] = useState<KPI[]>([]);
+  const [kpi, setKPI] = useState<KPI | null>(null);
 
   useEffect(() => {
     pingBackend().then((data) => {
@@ -18,20 +20,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    getKPIS().then(setKPIs)
+    getKPIS().then(data => {
+      if (data) setKPI(data);
+    });
   }, []);
 
   return (
-    <div>
+    <div className="app">
       <h1>Smart KPI Dashboard</h1>
-      <p>Backend: {message}</p>
-
-      {kpis.map(kpi => (
-        <div key={kpi.name}>
-          <h3>{kpi.name}</h3>
-          <p>{kpi.value}</p>
-        </div>
-      ))}
+      {kpi ? (
+        <ul>
+          <li>Revenue: {kpi.revenue}</li>
+          <li>Users: {kpi.users}</li>
+          <li>Conversion Rate: {kpi.conversion_rate}</li>
+          <li>Uptime: {kpi.uptime}</li>
+        </ul>
+      ) : (
+        <p>Loading KPIs...</p>
+      )}
+        <p>Backend: {message}</p>
     </div>
   );
 }
