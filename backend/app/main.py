@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import kpi
 
+#FastAPI declaration instance
 app = FastAPI()
+
+app.include_router(kpi.router)
 
 # Allow both localhost and 127.0.0.1 for frontend
 origins = [
